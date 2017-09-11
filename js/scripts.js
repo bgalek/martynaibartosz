@@ -1,5 +1,19 @@
 (function ($) {
     $(document).ready(function () {
+
+        $.get("/facebook.json", function (data) {
+            data = uniqBy(data.result, function (key) {
+                return key.content
+            });
+            $("#facefeed").append(data
+                .map(function (it) {
+                    var href = document.createElement('a');
+                    href.href = 'https://facebook.com/' + it.postID;
+                    href.style.backgroundImage = "url('" + it.photoURL + "')";
+                    return href;
+                }));
+        });
+
         var feed = new Instafeed({
             get: 'tagged',
             tagName: 'martynaibartosz',
@@ -45,9 +59,17 @@
             }
         }
 
-        $('#clock').countdown('2017/09/09', function (event) {
+        $('#clock').countdown('2017/09/09 17:00', function (event) {
             $(this).html(event.strftime('%D dni %H:%M:%S'));
         });
+
+        function uniqBy(a, key) {
+            var seen = {};
+            return a.filter(function (item) {
+                var k = key(item);
+                return seen.hasOwnProperty(k) ? false : (seen[k] = true);
+            })
+        }
 
     });
 }(jQuery));
